@@ -5,29 +5,7 @@ Created on Wed Jul 15 13:39:56 2015
 @author: cyril
 """
 from __future__ import print_function
-from decimal import *
-import fpformat
 import time
-
-def prcnt(a,b,f):
-	a=str(Decimal(((a//((b)*10**-64))+1)*10**-64)*10**2)
-	return fpformat.fix(a, f)
-
-def f(x):
-    tmp=hashlib.new("md5")
-    tmp.update(x)
-    return tmp.hexdigest()
-
-def f2(x):
-    return x
-
-def f3(x):
-    return ""
-
-def f4(x):
-	random.seed(var.key)
-	return chr(xor(ord(x),random.randrange(0,255)))
-
 
 import mmap
 def MEM_F_FIND(fichier,cherche,size_block=1,padding_read=0):
@@ -89,7 +67,7 @@ fichier_a=args.string0
 fichier_b=args.string1
 chiffre= args.chiffre
 mode=args.mode
-from Crypto.Cipher import AES
+
 
 r,dta=-1,""
 
@@ -102,7 +80,7 @@ if mode == "in":
 			password=""
 			random.seed(int(float.fromhex(h_passw.hexdigest())))
 			fa=open(fichier_a,"r")
-			fb=open(fichier_b,"append")
+			fb=open(fichier_b,"a")
 			tmp= " "			
 			fb.write("S-T-E-G-A-"+h_passw.hexdigest())
 			while tmp!="":
@@ -114,7 +92,7 @@ if mode == "in":
 	if chiffre == "NO":
 		if os.path.exists(fichier_a):
 			fa=open(fichier_a,"r")
-			fb=open(fichier_b,"append")
+			fb=open(fichier_b,"a")
 			tmp= " "
 			fb.write("S-T-E-G-A-")
 			while tmp!="":
@@ -132,7 +110,7 @@ if mode == "in":
 			random.seed(int(float.fromhex(h_passw.hexdigest()))+(int(time.time())/60/60))
 
 			fa=open(fichier_a,"r")
-			fb=open(fichier_b,"append")
+			fb=open(fichier_b,"a")
 			tmp= " "			
 			fb.write("S-T-E-G-A-")
 			while tmp!="":
@@ -156,7 +134,7 @@ if mode == "out":
 			if r!=-1:
 				print ("mot de passe OK.")
 				random.seed(int(float.fromhex(h_passw.hexdigest())))
-				fb=open(fichier_b,"append")
+				fb=open(fichier_b,"a")
 				e,n=len(dta),1
 				while n<e+1:
 					tmp=dta[:n][-1:]
@@ -172,7 +150,7 @@ if mode == "out":
 			r,dta=MEM_F_FIND_n_READ(fichier_a,"S-T-E-G-A-")
 			
 			if r!=-1:
-				fb=open(fichier_b,"append")
+				fb=open(fichier_b,"a")
 				fb.write(dta)
 				fb.close()
 
@@ -187,7 +165,7 @@ if mode == "out":
 			r,dta=MEM_F_FIND_n_READ(fichier_a,"S-T-E-G-A-")
 
 			random.seed(int(float.fromhex(h_passw.hexdigest()))+(int(time.time())/60/60))
-			fb=open(fichier_b,"append")
+			fb=open(fichier_b,"a")
 			e,n=len(dta),1
 			while n<e+1:
 				tmp=dta[:n][-1:]
