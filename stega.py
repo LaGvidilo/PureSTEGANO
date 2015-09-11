@@ -75,7 +75,7 @@ parser.add_argument('string0', metavar='Fa', type=str,
 parser.add_argument('string1', metavar='Fb', type=str,
                    help="Nom du fichier cible.")
 parser.add_argument('chiffre', metavar='C', type=str,
-                   help="Cryptage (NO/XOR/AES) (NO-PAS DE CRYPTAGE, XOR-OU EXCLUSIF SIMPLE PASSE, AES - STANDARD)")
+                   help="Cryptage (NO/XOR) (NO-PAS DE CRYPTAGE, XOR-OU EXCLUSIF SIMPLE PASSE)")
 parser.add_argument('mode', metavar='V', type=str,
                    help="Mode (in/out)")
 
@@ -89,35 +89,6 @@ from Crypto.Cipher import AES
 r,dta=-1,""
 
 if mode == "in":
-	if chiffre == "AES":
-		message=[]
-		password=getpass.getpass()
-		h_passw=hashlib.new("sha512")
-		h_passw.update(password)
-		random.seed(int(float.fromhex(h_passw.hexdigest())))
-		password=""
-		key=""
-		while len(key)<16:
-			key=key+chr(random.randint(0,255))
-		fa=open(fichier_a,'r')
-		fb=open(fichier_b,'append')
-		fb.write("S-T-E-G-A-"+h_passw.hexdigest())
-		tmp=" "
-		while tmp!="":
-			tmp=fa.read(16)
-			if len(tmp)>0: message.append(tmp)
-			
-		n=0
-		e=len(message)
-		while n<e-1:
-
-			obj = AES.new(key, AES.MODE_ECB)
-			ctext=obj.encrypt(message[n])
-			fb.write(ctext)
-			n=n+1
-		fa.close()
-		fb.close()
-		
 		
 	if chiffre =="XOR":
 		if os.path.exists(fichier_a):
@@ -149,33 +120,7 @@ if mode == "in":
 			fa.close()
 			fb.close()
 if mode == "out":
-	if chiffre=="AES":
-		if os.path.exists(fichier_a):
-			password=getpass.getpass()
-			h_passw=hashlib.new("sha512")
-			h_passw.update(password)
-			password=""
-			random.seed(int(float.fromhex(h_passw.hexdigest())))
-			key,ctext="",""
-			while len(key)<16:
-				key=key+chr(random.randint(0,255))
-			r,dta=MEM_F_FIND_n_READ(fichier_a,"S-T-E-G-A-"+h_passw.hexdigest())
-			if r!=-1:
-				fb=open(fichier_b,'append')
-				print ("mot de passe OK.")
-				message=""
-				e,n=len(dta),1
-				while n<e+1:
-					tmp=dta[:n][-16:]
-					obj = AES.new(key, AES.MODE_ECB)
-					if ctext<16: ctext=obj.decrypt(tmp)
-					fb.write(ctext)
-					n=n+16
 
-				#fa.close()
-				fb.close()
-			else:
-				print ("mot de passe incorrect!")
 
 	if chiffre =="XOR":
 		if os.path.exists(fichier_a):

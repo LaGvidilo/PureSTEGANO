@@ -156,7 +156,7 @@ if mode == "out":
 			h_passw.update(password)
 			password=""
 			random.seed(int(float.fromhex(h_passw.hexdigest())))
-			key=""
+			key,ctext="",""
 			while len(key)<16:
 				key=key+chr(random.randint(0,255))
 			r,dta=MEM_F_FIND_n_READ(fichier_a,"S-T-E-G-A-"+h_passw.hexdigest())
