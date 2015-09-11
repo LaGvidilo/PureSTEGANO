@@ -7,7 +7,7 @@ Created on Wed Jul 15 13:39:56 2015
 from __future__ import print_function
 from decimal import *
 import fpformat
-
+import time
 
 def prcnt(a,b,f):
 	a=str(Decimal(((a//((b)*10**-64))+1)*10**-64)*10**2)
@@ -23,6 +23,11 @@ def f2(x):
 
 def f3(x):
     return ""
+
+def f4(x):
+	random.seed(var.key)
+	return chr(xor(ord(x),random.randrange(0,255)))
+
 
 import mmap
 def MEM_F_FIND(fichier,cherche,size_block=1,padding_read=0):
@@ -69,13 +74,13 @@ from operator import *
 import random
 import getpass
 
-parser = argparse.ArgumentParser(description='Prototype de compression no-limit.')
+parser = argparse.ArgumentParser(description='Prototype de compression no-limit.(vProto D)')
 parser.add_argument('string0', metavar='Fa', type=str,
                    help="Nom du fichier source.")
 parser.add_argument('string1', metavar='Fb', type=str,
                    help="Nom du fichier cible.")
 parser.add_argument('chiffre', metavar='C', type=str,
-                   help="Cryptage (NO/XOR) (NO-PAS DE CRYPTAGE, XOR-OU EXCLUSIF SIMPLE PASSE)")
+                   help="Cryptage (NO/XOR/TIME) (NO-PAS DE CRYPTAGE, XOR-SIMPLE PASSE, XOR-BASER SUR L'HEURE)")
 parser.add_argument('mode', metavar='V', type=str,
                    help="Mode (in/out)")
 
@@ -89,7 +94,6 @@ from Crypto.Cipher import AES
 r,dta=-1,""
 
 if mode == "in":
-		
 	if chiffre =="XOR":
 		if os.path.exists(fichier_a):
 			password=getpass.getpass()
@@ -107,7 +111,6 @@ if mode == "in":
 			fa.close()
 			fb.close()
 
-
 	if chiffre == "NO":
 		if os.path.exists(fichier_a):
 			fa=open(fichier_a,"r")
@@ -119,9 +122,27 @@ if mode == "in":
 				fb.write(tmp)
 			fa.close()
 			fb.close()
+
+	if chiffre == "TIME":
+		if os.path.exists(fichier_a):
+			password=getpass.getpass()
+			h_passw=hashlib.new("sha512")
+			h_passw.update(password)
+			password=""
+			random.seed(int(float.fromhex(h_passw.hexdigest()))+(int(time.time())/60/60))
+
+			fa=open(fichier_a,"r")
+			fb=open(fichier_b,"append")
+			tmp= " "			
+			fb.write("S-T-E-G-A-")
+			while tmp!="":
+				tmp=fa.read(1)
+				if len(tmp)>0: fb.write(chr(xor(ord(tmp),random.randrange(0,255))))
+			fa.close()
+			fb.close()
+
+
 if mode == "out":
-
-
 	if chiffre =="XOR":
 		if os.path.exists(fichier_a):
 			password=getpass.getpass()
@@ -135,14 +156,12 @@ if mode == "out":
 			if r!=-1:
 				print ("mot de passe OK.")
 				random.seed(int(float.fromhex(h_passw.hexdigest())))
-				#fa=open(fichier_a,"r")
 				fb=open(fichier_b,"append")
 				e,n=len(dta),1
 				while n<e+1:
 					tmp=dta[:n][-1:]
 					if len(tmp)>0: fb.write(chr(xor(ord(tmp),random.randint(0,255))))
 					n=n+1
-				#fa.close()
 				fb.close()
 			else:
 				print ("mot de passe incorrect!")
@@ -158,6 +177,23 @@ if mode == "out":
 				fb.close()
 
 
+	if chiffre =="TIME":
+		if os.path.exists(fichier_a):
+			password=getpass.getpass()
+			h_passw=hashlib.new("sha512")
+			h_passw.update(password)
+			password=""
+
+			r,dta=MEM_F_FIND_n_READ(fichier_a,"S-T-E-G-A-")
+
+			random.seed(int(float.fromhex(h_passw.hexdigest()))+(int(time.time())/60/60))
+			fb=open(fichier_b,"append")
+			e,n=len(dta),1
+			while n<e+1:
+				tmp=dta[:n][-1:]
+				if len(tmp)>0: fb.write(chr(xor(ord(tmp),random.randrange(0,255))))
+				n=n+1
+			fb.close()
 
 
 
